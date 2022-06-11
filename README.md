@@ -1,12 +1,37 @@
-# 🍭 基础配置模板
+# 🍭 Auto Make Release
 
-🤖 该模板主要应用于快速搭建开发脚手架、功能库等常用的基础配置
+🤖 用于自动发布 release 的 GitHub Action
 
-### 🚀 主要包括
+## 🚀 Usage
 
-- TypeScript 配置
-- Jest 代码测试配置
-- Eslint 代码检查配置
-- Prettier 代码美化配置
-- Commitlint 代码提交信息规范配置 
-- husky v8 等相关基础配置
+### Example
+
+```yml
+name: 🤖 Auto Make Release
+
+on:
+  create
+
+jobs:
+  release-helper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: make release
+        if: github.event.ref_type == 'tag'
+        uses: iwtem-actions/release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          triger: 'tag'
+          changelogs: 'CHANGELOG.md'
+          branch: 'master'
+```
+
+### Inputs
+
+| Name             | Desc                                                          | Type    | Required |
+|------------------|---------------------------------------------------------------|---------|----------|
+| token            | GitHub Token                                                  | string  | ✔        |
+| trigger          | Triggering conditions                                         | string  | ✔        |
+| changelogs       | The changelog file path                                       | string  | ✔        |
+| branch           | The changelog file branch                                     | string  | ✔        |
+| prerelease-flags | Version filter prerelease                                     | string  | ✖        |
