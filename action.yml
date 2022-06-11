@@ -1,0 +1,23 @@
+name: 'Release action'
+description: 'A GitHub action that help you publish release'
+author: 'iwtem'
+branding:
+  icon: 'layers'
+  color: 'orange'
+inputs:
+  triger:
+    description: '如何触发 Action'
+  branch:
+    description: 'Changelogs 的 所在分支'
+  changelogs:
+    description: 'Changelogs 的文件名称'
+  token:
+    description: 'GitHub token'
+    default: ${{ github.token }}
+  prettier:
+    description: '是否需要进行美化 changelog'
+  prerelease-flags:
+    description: '发布 prerelease 的标志'
+runs:
+  using: node12
+  main: 'dist/index.js'

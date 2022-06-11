@@ -6,8 +6,6 @@ node_modules/
 # VCS 目录
 .svn/
 .git/
-# 打包目录
-dist/
 # 其他文件
 package-lock.json
 yarn.lock
