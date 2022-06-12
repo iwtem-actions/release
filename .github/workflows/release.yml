@@ -1,0 +1,21 @@
+name: Release package
+on:
+  create
+
+permissions:
+  contents: read
+
+jobs:
+  release-package:
+    permissions:
+      contents: write
+    if: github.event.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make release
+        uses: iwtem-actions/release
+        with:
+          trigger: 'tag'
+          branch: 'master'
+          changelogs: 'CHANGELOG.md'
+          prerelease-filter: '-, a, b, A, B'

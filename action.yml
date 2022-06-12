@@ -6,17 +6,23 @@ branding:
   color: 'orange'
 inputs:
   triger:
+    required: true
     description: '如何触发 Action'
   branch:
+    required: true
     description: 'Changelogs 的 所在分支'
   changelogs:
+    required: true
     description: 'Changelogs 的文件名称'
   token:
-    description: 'GitHub token'
+    required: false
     default: ${{ github.token }}
+    description: 'GitHub token'
   prettier:
+    required: false
     description: '是否需要进行美化 changelog'
   prerelease-flags:
+    required: false
     description: '发布 prerelease 的标志'
 runs:
   using: node12
