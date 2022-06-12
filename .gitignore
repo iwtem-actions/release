@@ -7,7 +7,5 @@ node_modules/
 .svn/
 .git/
 # 其他文件
-package-lock.json
-yarn.lock
 .DS_Store
 .husky/_/
