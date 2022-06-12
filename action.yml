@@ -1,4 +1,4 @@
-name: 'Iwtem Release action'
+name: 'Iwtem release action'
 description: 'A GitHub action that help you publish release'
 author: 'iwtem'
 branding:
