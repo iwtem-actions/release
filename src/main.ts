@@ -1,6 +1,5 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Octokit } from '@octokit/rest';
 import { getChangeLog } from './util';
 
 async function main(): Promise<void> {
@@ -12,7 +11,7 @@ async function main(): Promise<void> {
     const trigger = core.getInput('trigger', { required: true });
     const changelogs = core.getInput('changelogs', { required: true });
 
-    const octokit = new Octokit({ auth: `token ${token}` });
+    const octokit = github.getOctokit(token);
 
     const { owner, repo } = github.context.repo;
     const { ref_type: refType, ref: version } = github.context.payload;
@@ -21,7 +20,7 @@ async function main(): Promise<void> {
     core.info(`ref_type: ${refType}, ref: ${version}`);
 
     if (trigger !== refType) {
-      core.error("[Actions] The input 'trigger' not match actions 'on'\"");
+      core.setFailed("[Actions] The input 'trigger' not match actions 'on'\"");
       return;
     }
 
@@ -42,7 +41,7 @@ async function main(): Promise<void> {
       }
     }
 
-    await octokit.repos.createRelease({
+    await octokit.rest.repos.createRelease({
       owner,
       repo,
       tag_name: version,
@@ -53,7 +52,7 @@ async function main(): Promise<void> {
 
     core.info(`[Actions] Success release ${version}.`);
   } catch (e: any) {
-    core.error(`[Actions] Error: ${e.message}`);
+    core.setFailed(`[Actions] Error: ${e.message}`);
   }
 }
 

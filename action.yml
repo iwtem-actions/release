@@ -4,8 +4,11 @@ author: 'iwtem'
 branding:
   icon: 'layers'
   color: 'orange'
+runs:
+  using: node16
+  main: 'dist/index.js'
 inputs:
-  triger:
+  trigger:
     required: true
     description: '如何触发 Action'
   branch:
@@ -24,6 +27,3 @@ inputs:
   prerelease-flags:
     required: false
     description: '发布 prerelease 的标志'
-runs:
-  using: node12
-  main: 'dist/index.js'
