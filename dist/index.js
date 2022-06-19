@@ -2878,44 +2878,6 @@ exports.paginatingEndpoints = paginatingEndpoints;
 
 /***/ }),
 
-/***/ 8883:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-const VERSION = "1.0.4";
-
-/**
- * @param octokit Octokit instance
- * @param options Options passed to Octokit constructor
- */
-
-function requestLog(octokit) {
-  octokit.hook.wrap("request", (request, options) => {
-    octokit.log.debug("request", options);
-    const start = Date.now();
-    const requestOptions = octokit.request.endpoint.parse(options);
-    const path = requestOptions.url.replace(options.baseUrl, "");
-    return request(options).then(response => {
-      octokit.log.info(`${requestOptions.method} ${path} - ${response.status} in ${Date.now() - start}ms`);
-      return response;
-    }).catch(error => {
-      octokit.log.info(`${requestOptions.method} ${path} - ${error.status} in ${Date.now() - start}ms`);
-      throw error;
-    });
-  });
-}
-requestLog.VERSION = VERSION;
-
-exports.requestLog = requestLog;
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
 /***/ 3044:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -4211,32 +4173,6 @@ const request = withDefaults(endpoint.endpoint, {
 });
 
 exports.request = request;
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
-/***/ 5375:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-var __webpack_unused_export__;
-
-
-__webpack_unused_export__ = ({ value: true });
-
-var core = __nccwpck_require__(6762);
-var pluginRequestLog = __nccwpck_require__(8883);
-var pluginPaginateRest = __nccwpck_require__(4193);
-var pluginRestEndpointMethods = __nccwpck_require__(3044);
-
-const VERSION = "18.12.0";
-
-const Octokit = core.Octokit.plugin(pluginRequestLog.requestLog, pluginRestEndpointMethods.legacyRestEndpointMethods, pluginPaginateRest.paginateRest).defaults({
-  userAgent: `octokit-rest.js/${VERSION}`
-});
-
-exports.v = Octokit;
 //# sourceMappingURL=index.js.map
 
 
@@ -8943,8 +8879,6 @@ __nccwpck_require__.r(__webpack_exports__);
 var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
-// EXTERNAL MODULE: ./node_modules/@octokit/rest/dist-node/index.js
-var dist_node = __nccwpck_require__(5375);
 ;// CONCATENATED MODULE: ./src/util.ts
 const getChangeLog = (content, version, prettier) => {
     const lines = content.split('\n');
@@ -8991,7 +8925,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -9001,13 +8934,13 @@ function main() {
             const branch = core.getInput('branch', { required: true });
             const trigger = core.getInput('trigger', { required: true });
             const changelogs = core.getInput('changelogs', { required: true });
-            const octokit = new dist_node/* Octokit */.v({ auth: `token ${token}` });
+            const octokit = github.getOctokit(token);
             const { owner, repo } = github.context.repo;
             const { ref_type: refType, ref: version } = github.context.payload;
             core.info(`owner: ${owner}, repo: ${repo}`);
             core.info(`ref_type: ${refType}, ref: ${version}`);
             if (trigger !== refType) {
-                core.error("[Actions] The input 'trigger' not match actions 'on'\"");
+                core.setFailed("[Actions] The input 'trigger' not match actions 'on'\"");
                 return;
             }
             const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/`;
@@ -9025,7 +8958,7 @@ function main() {
                     }
                 }
             }
-            yield octokit.repos.createRelease({
+            yield octokit.rest.repos.createRelease({
                 owner,
                 repo,
                 tag_name: version,
@@ -9036,7 +8969,7 @@ function main() {
             core.info(`[Actions] Success release ${version}.`);
         }
         catch (e) {
-            core.error(`[Actions] Error: ${e.message}`);
+            core.setFailed(`[Actions] Error: ${e.message}`);
         }
     });
 }
